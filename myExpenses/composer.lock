@@ -1,0 +1,147 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "2f543fcc17a8d4b6f117421a011ae13e",
+    "packages": [
+        {
+            "name": "avbdr/php-bootstrap-form",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/avbdr/php-bootstrap-form.git",
+                "reference": "a55e115eb3465efaf429dd6427c4f5e55a78fb85"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/avbdr/php-bootstrap-form/zipball/a55e115eb3465efaf429dd6427c4f5e55a78fb85",
+                "reference": "a55e115eb3465efaf429dd6427c4f5e55a78fb85",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "PFBC/Form.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alexander V. Butenko",
+                    "email": "a.butenka@gmail.com",
+                    "homepage": "http://smarttechdo.com",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Andrew Porterfield",
+                    "email": "ajporterfield@gmail.com",
+                    "homepage": "http://code.google.com/p/php-form-builder-class/",
+                    "role": "Initial Developer"
+                }
+            ],
+            "description": "PHP Bootstrap Form Helper",
+            "time": "2016-05-21 07:16:47"
+        },
+        {
+            "name": "php-activerecord/php-activerecord",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jpfuentes2/php-activerecord.git",
+                "reference": "7e96e72f9a018282cce62ef23706dad1532bbaaf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jpfuentes2/php-activerecord/zipball/7e96e72f9a018282cce62ef23706dad1532bbaaf",
+                "reference": "7e96e72f9a018282cce62ef23706dad1532bbaaf",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "pear/log": "~1.12",
+                "pear/pear_exception": "1.0-beta1",
+                "phpunit/phpunit": "4.*"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "ActiveRecord.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "php-activerecord is an open source ORM library based on the ActiveRecord pattern.",
+            "homepage": "http://www.phpactiverecord.org/",
+            "keywords": [
+                "activerecord",
+                "orm"
+            ],
+            "time": "2016-11-29 11:06:47"
+        },
+        {
+            "name": "verot/class.upload.php",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/verot/class.upload.php.git",
+                "reference": "b983e880969d0d980b77881cb82139361d4e0c63"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/verot/class.upload.php/zipball/b983e880969d0d980b77881cb82139361d4e0c63",
+                "reference": "b983e880969d0d980b77881cb82139361d4e0c63",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=4"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/class.upload.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPLv2"
+            ],
+            "authors": [
+                {
+                    "name": "Colin Verot",
+                    "email": "colin@verot.net"
+                }
+            ],
+            "description": "This PHP class uploads files and manipulates images very easily.",
+            "homepage": "http://www.verot.net/php_class_upload.htm",
+            "keywords": [
+                "gd",
+                "upload"
+            ],
+            "time": "2017-01-24 00:19:49"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "php-activerecord/php-activerecord": 20,
+        "avbdr/php-bootstrap-form": 20,
+        "verot/class.upload.php": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}

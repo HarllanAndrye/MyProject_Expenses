@@ -1,0 +1,243 @@
+<section id="container" >
+  <!-- **********************************************************************************************************************************************************
+  TOP BAR CONTENT & NOTIFICATIONS
+  *********************************************************************************************************************************************************** -->
+  <!--header start-->
+  <header class="header black-bg">
+          <div class="sidebar-toggle-box">
+              <div class="fa fa-bars tooltips" data-placement="right" data-original-title="Toggle Navigation"></div>
+          </div>
+        <!--logo start-->
+        <a class="logo"><b>Despesas/Gastos</b></a>
+        <!--logo end-->
+        <div class="top-menu">
+            <ul class="nav pull-right top-menu">
+                <li><a class="logout" href="<?php echo BASE; ?>login/logout/">Sair</a></li>
+            </ul>
+        </div>
+    </header>
+  <!--header end-->
+  
+  <!-- **********************************************************************************************************************************************************
+  MAIN SIDEBAR MENU
+  *********************************************************************************************************************************************************** -->
+  <!--sidebar start-->
+  <aside>
+
+    <div id="sidebar"  class="nav-collapse ">
+      <!-- sidebar menu start-->
+      <ul class="sidebar-menu" id="nav-accordion">
+
+        <p class="centered">
+          <a href="<?php echo BASE; ?>profile/edit/">
+            <img title="Alterar minhas informações" src="<?php echo IMG_UPLOAD; ?>users/<?php echo (!is_null($view_user->image)) ? $view_user->id . '/' . $view_user->image : 'img_default_user.png' ;?>" class="img-circle" width="60">
+          </a>
+        </p>
+        <h5 class="centered"><?php echo strtoupper($view_user->name); ?></h5>
+
+      <?php echo (isset($this->menu) ? $this->menu : ''); ?>
+  </aside>
+  <!--sidebar end-->
+  
+  <!-- **********************************************************************************************************************************************************
+  MAIN CONTENT
+  *********************************************************************************************************************************************************** -->
+  <!--main content start-->
+  <section id="main-content">
+      <section class="wrapper">
+				
+			<?php
+				$monthNumber = date('n');
+				$expensesUserMonth = MonthlyExpenses::searchUserExpensesMonth($view_user->id, $monthNumber);
+				//echo "<pre>"; var_dump($expensesUserMonth); echo "</pre>";
+				
+				$monthExpenses = $expensesUserMonth['expensesMonth'];
+				$groupExpenses = $expensesUserMonth['expensesGroups'];
+				//echo "<pre>"; var_dump($monthExpenses); echo "</pre>";
+				//echo "<pre>"; var_dump($groupExpenses); echo "</pre>";
+				
+				// Retorna o salário do usuário
+				$incomeUser = IncomeUsers::searchUserIncome($view_user->id);
+				$totalIncomeUser = $incomeUser['amount'] + $incomeUser['additional'];
+			?>
+				
+      <h3><i class="fa fa-angle-right"></i> Visualização geral dos gastos do mês</h3>
+          <!-- page start -->
+          <div id="morris">
+              <div class="row mt">
+                  <div class="col-lg-6">
+                      <div class="content-panel">
+                          <h4><i class="fa fa-angle-right"></i> Despesas do mês</h4>
+                          <div class="panel-body text-center">
+                              <canvas id="canvas"></canvas>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="col-lg-6">
+                      <div class="content-panel">
+                          <h4><i class="fa fa-angle-right"></i> Despesas por grupo</h4>
+                          <div class="panel-body">
+                              <div id="chart-donut" class="graph" style="height: 397px;"></div> 
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <!-- page end-->
+      </section>
+  </section>
+  <!--main content end-->
+	
+  <!--footer start-->
+  <footer class="site-footer">
+      <div class="text-center">
+          2017 - Harllan A.
+      </div>
+  </footer>
+  <!--footer end-->
+</section>
+
+<!-- js placed at the end of the document so the pages load faster -->
+<script src="<?php echo DASHGUM; ?>js/jquery.js"></script>
+<script src="<?php echo DASHGUM; ?>js/bootstrap.min.js"></script>
+<script class="include" type="text/javascript" src="<?php echo DASHGUM; ?>js/jquery.dcjqaccordion.2.7.js"></script>
+<script src="<?php echo DASHGUM; ?>js/jquery.scrollTo.min.js"></script>
+<script src="<?php echo DASHGUM; ?>js/jquery.nicescroll.js" type="text/javascript"></script>
+
+<!--common script for all pages-->
+<script src="<?php echo DASHGUM; ?>js/common-scripts.js"></script>
+
+
+<!-- Esses links foram substituídos pelos arquivos "morris.min.js" e "raphael-min.js". -->
+<!--
+<script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+<script src="http://cdn.oesmith.co.uk/morris-0.4.3.min.js"></script>
+-->
+
+<!--script for this page-->
+<!-- EXCLUIR DEPOIS ESSE ARQUIVO
+	<script src="<?php //echo DASHGUM; ?>js/morris-conf.js"></script>
+-->
+<script src="<?php echo DASHGUM; ?>js/morris.min.js"></script>
+<script src="<?php echo DASHGUM; ?>js/raphael-min.js"></script>
+
+<?php
+	$valueAmountPercent = array();
+	$groupName = array();
+	$totalAmountPercentGroups = 0;
+	foreach($groupExpenses as $name => $amount){
+		if($totalIncomeUser == 0){
+			$percentAmount = 0;
+		} else {
+			$percentAmount = round(($amount*100)/$totalIncomeUser, 1, PHP_ROUND_HALF_UP);
+		}
+		array_push($valueAmountPercent, $percentAmount);
+		array_push($groupName, $name);
+		$totalAmountPercentGroups += $percentAmount;
+	}
+	$groupExpensesPercent = array_combine($groupName, $valueAmountPercent);
+	$totalLeaveIncomePercent = number_format(100-$totalAmountPercentGroups, 2, '.', '');
+?>
+
+<!-- //Morris charts: http://morrisjs.github.io/morris.js/ -->
+<script type="text/javascript">
+	Morris.Donut({
+	  element: 'chart-donut',
+	  data: [
+	    <?php
+				$data = "";
+				foreach($groupExpensesPercent as $key => $value){
+					$data .= "{value: ". number_format($value,2,'.','') .", label: '". $key ."'},";
+				}
+				$data = substr_replace(trim($data), '', -1);
+				
+				if(empty($data)){
+					$data .= "{value: '100', label: ''}";
+				} else {
+					$data .= ",{value: ". $totalLeaveIncomePercent .", label: 'Restante'}";
+				}
+				echo $data;
+			?>
+	  ],
+	  resize: true,
+	  formatter: function(x){ return x + "%";}
+	}).on('click', function(i, row){
+	  console.log(i, row);
+	});
+</script>
+
+
+<!-- Para o gráfico em linha -->
+<script src="<?php echo DASHGUM; ?>js/chart-master/Chart.bundle.js"></script>
+<script src="<?php echo DASHGUM; ?>js/chart-master/utils.js"></script>
+
+<?php
+	$labelsChartLine = "";
+	$dataChartLine = "";
+	foreach($monthExpenses as $date => $amount){
+		$labelsChartLine .= ("'".$date."', ");
+		$dataChartLine .= ("'".$amount."', ");
+	}
+	
+	if(empty($labelsChartLine) && empty($dataChartLine)){
+		$labelsChartLine = "''";
+		$dataChartLine = "'0'";
+	} else {
+		$labelsChartLine = substr_replace(trim($labelsChartLine), '', -1); // Retirando a vírgula que fica no final da string
+		$dataChartLine = substr_replace(trim($dataChartLine), '', -1);
+	}
+?>
+
+<!-- http://www.chartjs.org/ -->
+<script>
+    var config = {
+        type: 'line',
+        data: {
+            labels: [<?php echo $labelsChartLine; ?>],
+            datasets: [{
+                label: "Junho",
+                backgroundColor: window.chartColors.blue,
+                borderColor: window.chartColors.blue,
+                data: [<?php echo $dataChartLine; ?>],
+                fill: false,
+            }]
+        },
+        options: {
+            responsive: true,
+						legend: {
+							display: false
+						},
+            tooltips: {
+                mode: 'index',
+                intersect: false,
+            },
+            hover: {
+                mode: 'nearest',
+                intersect: true
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Data'
+                    }
+                }],
+                yAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Valor em R$'
+                    }
+                }]
+            }
+        }
+    };
+
+	// Aqui mostra o gráfico na página
+    window.onload = function() {
+        var ctx = document.getElementById("canvas").getContext("2d");
+        window.myLine = new Chart(ctx, config);
+    };
+</script>
+

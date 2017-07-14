@@ -1,0 +1,73 @@
+    <div id="login-page">
+
+      <!-- Caso aconteça algum erro -->
+      <?php echo (isset($this->alert)?$this->alert:''); ?>
+
+      <div class="container">
+      
+          <form class="form-login" method="post" action="<?php echo BASE; ?>login/signin/">
+            <h2 class="form-login-heading">Fazer login para continuar</h2>
+            <div class="login-wrap">
+                <input type="text" class="form-control" name="username" id="username" placeholder="Usuário" autofocus>
+                <br>
+                <input type="password" class="form-control" name="password" id="password" placeholder="Senha">
+                <label class="checkbox">
+                    <span class="pull-right">
+                        <!-- <a data-toggle="modal" href="login.html#myModal"> Esqueceu a senha?</a> -->
+                        <a href="<?php echo BASE; ?>recover/"> Esqueceu a senha?</a>
+                    </span>
+                </label>
+                <button class="btn btn-theme btn-block" type="submit"><i class="fa fa-lock"></i> ENTRAR</button>
+                <hr>
+                
+                <div class="registration">
+                    Não tem uma conta ainda?<br/>
+                    <a class="" href="<?php echo BASE; ?>registration/">
+                        Criar uma conta
+                    </a>
+                </div>
+    
+            </div>
+    
+              <!-- Modal -->
+              <!--
+              <div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal" class="modal fade">
+                <form method="post" action="<?php //echo BASE; ?>recover/request/">
+                  <div class="modal-dialog">
+                      <div class="modal-content">
+                          <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                              <h4 class="modal-title">Esqueceu a senha?</h4>
+                          </div>
+                          <div class="modal-body">
+                              <p>Entre com seu endereço de e-mail abaixo para alterar sua senha.</p>
+                              <input type="email" name="email" id="email" placeholder="email@dominio.com" autocomplete="off" class="form-control placeholder-no-fix" value="<?php //echo $this->request->post('email') ?>">
+    
+                          </div>
+                          <div class="modal-footer">
+                              <button data-dismiss="modal" class="btn btn-default" type="button">Cancelar</button>
+                              <button class="btn btn-theme" type="submit">Enviar</button>
+                          </div>
+                      </div>
+                  </div>
+                </form>
+              </div>
+              -->
+              <!-- modal -->
+    
+          </form>     
+      
+      </div>
+    </div>
+
+    <!-- js placed at the end of the document so the pages load faster -->
+    <script src="<?php echo DASHGUM; ?>js/jquery.js"></script>
+    <script src="<?php echo DASHGUM; ?>js/bootstrap.min.js"></script>
+
+    <!--BACKSTRETCH-->
+    <!-- You can use an image of whatever size. This script will stretch to fit in any screen size.-->
+    <script type="text/javascript" src="<?php echo DASHGUM; ?>js/jquery.backstretch.min.js"></script>
+    <script>
+        $.backstretch("<?php echo DASHGUM; ?>img/background.jpg", {speed: 500});
+    </script>
+

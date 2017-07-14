@@ -1,0 +1,422 @@
+<section id="container" >
+      
+      <?php
+            $month = array('', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro');
+            $monthNumber = date('n');
+            
+            $incomeUser = IncomeUsers::searchUserIncome($view_user->id);
+            $expensesUser = MonthlyExpenses::searchUserExpensesYear($view_user->id, $monthNumber);
+            
+            //echo "<pre>"; var_dump($expensesUser); echo "</pre>";
+            
+            if(!is_null($incomeUser) && !is_null($expensesUser)){
+                  $totalAmount = $incomeUser['amount'] + $incomeUser['additional'];
+                  $valueExpensePercent = round(($expensesUser['totalExpensesMonth']*100)/$totalAmount, 1, PHP_ROUND_HALF_UP);
+                  
+                  // Meses para serem usados nos gráficos (12 meses)
+                  $monthsExpenses = $expensesUser['expensesYearArray'];
+                  
+                  if(count($monthsExpenses) < 12){
+                  $i = 0;
+                  $qtdMonths = 12-count($monthsExpenses);
+                  while($i < $qtdMonths) { 
+                  array_unshift($monthsExpenses, 0); //Acrescenta valores no início do array
+                  $i++;
+                  }
+                  }
+            
+            } else {
+                  $totalAmount = 0;
+                  $valueExpensePercent = 0;
+                  $monthsExpenses = array(0,0,0,0,0,0,0,0,0,0,0,0);
+            }
+      ?>
+      
+      <!-- **********************************************************************************************************************************************************
+      TOP BAR CONTENT & NOTIFICATIONS
+      *********************************************************************************************************************************************************** -->
+      <!--header start-->
+      <header class="header black-bg">
+              <div class="sidebar-toggle-box">
+                  <div class="fa fa-bars tooltips" data-placement="right" data-original-title="Toggle Navigation"></div>
+              </div>
+            <!--logo start-->
+            <a class="logo"><b>Despesas/Gastos</b></a>
+            <!--logo end-->
+            <div class="nav notify-row" id="top_menu">
+                <!--  notification start -->
+                <ul class="nav top-menu">
+                    <!-- settings start -->
+                    <li class="dropdown">
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="index.html#">
+                            <i class="fa fa-tasks"></i>
+                            
+                            <?php
+                              $alert = "";
+                              $percentLose = "";
+                              $barChangeColor = "";
+                              if($valueExpensePercent >= 50 && $valueExpensePercent <= 55){
+                                    $alert = "Aviso: Você gastou 50% da sua renda";
+                                    $percentLose = '50%';
+                                    $barChangeColor = "progress-bar-success";
+                              } else if($valueExpensePercent >= 75 && $valueExpensePercent <= 80){
+                                    $alert = "Atenção: Você gastou 75% da sua renda";
+                                    $percentLose = '75%';
+                                    $barChangeColor = "progress-bar-warning";
+                              } else if($valueExpensePercent >= 90 && $valueExpensePercent <= 93){
+                                    $alert = "Alerta: Você gastou 90% da sua renda. Cuidado!";
+                                    $percentLose = "90%";
+                                    $barChangeColor = "progress-bar-danger";
+                              } else if($valueExpensePercent >= 98){
+                                    $alert = "Alerta: Sua renda desse mês está acabando";
+                                    $percentLose = $valueExpensePercent."%";
+                                    $barChangeColor = "progress-bar-danger";
+                              } else {
+                                    $alert = "";
+                                    $percentLose = "0";
+                                    $barChangeColor = "progress-bar-success";
+                              }
+                              
+                              // Início do html
+                              $notification = "";
+                              if(!empty($alert)){
+                                    $notification = "Notificação";
+                                    echo '<span class="badge bg-theme">1</span>';
+                              } else {
+                                    $notification = "Nenhuma notificação";
+                              }
+                              
+                              echo '</a>';
+                              echo '<ul class="dropdown-menu extended tasks-bar">';
+                              echo '<div class="notify-arrow notify-arrow-green"></div>';
+                              
+                              echo '<li><p class="green">'.$notification.'</p></li>';
+                              
+                              echo '<li>';
+                              echo '<a>';
+                              echo '      <div class="task-info">';
+                              echo '            <div class="desc">'.$alert.'</div>';
+                              echo '                  <div class="percent">'.($percentLose == 0) ? "" : $percentLose.'</div>';
+                              echo '            </div>';
+                              echo '            <div class="progress progress-striped">';
+                              echo '                  <div class="progress-bar '.$barChangeColor.'" role="progressbar" aria-valuenow="'.substr_replace($percentLose, '', -1).'" aria-valuemin="0" aria-valuemax="100" style="width: '.$percentLose.'">';
+                              echo '            </div>';
+                              echo '      </div>';
+                              echo '</a>'; 
+                              echo '</li>';
+                            ?>
+
+                        </ul>
+                    </li>
+                    <!-- settings end -->
+                </ul>
+                <!--  notification end -->
+            </div>
+            <div class="top-menu">
+                <ul class="nav pull-right top-menu">
+                    <li><a class="logout" href="<?php echo BASE; ?>login/logout/">Sair</a></li>
+                </ul>
+            </div>
+        </header>
+      <!--header end-->
+      
+      <!-- **********************************************************************************************************************************************************
+      MAIN SIDEBAR MENU
+      *********************************************************************************************************************************************************** -->
+      <!--sidebar start-->
+      <aside>
+
+        <div id="sidebar"  class="nav-collapse ">
+          <!-- sidebar menu start-->
+          <ul class="sidebar-menu" id="nav-accordion">
+
+            <p class="centered">
+              <a href="<?php echo BASE; ?>profile/edit/">
+                <img title="Alterar minhas informações" src="<?php echo IMG_UPLOAD; ?>users/<?php echo (!is_null($view_user->image)) ? $view_user->id . '/' . $view_user->image : 'img_default_user.png' ;?>" class="img-circle" width="60">
+              </a>
+            </p>
+            <h5 class="centered"><?php echo strtoupper($view_user->name); ?></h5>
+
+          <?php echo (isset($this->menu) ? $this->menu : ''); ?>
+      </aside>
+      <!--sidebar end-->
+      
+      <!-- **********************************************************************************************************************************************************
+      MAIN CONTENT
+      *********************************************************************************************************************************************************** -->
+      <!--main content start-->
+      <section id="main-content">
+          <section class="wrapper">
+
+              <div class="row">
+                  <div class="col-lg-9 main-chart">
+                  
+                    <div class="row">
+                        <!-- STATISTIC PANEL -->
+                        <div class="col-md-6 mb">
+                            <div class="darkblue-panel pn">
+                                <div class="darkblue-header">
+                                    <h5>ESTATÍSTICA MENSAL</h5>
+                                </div>
+                                <canvas id="serverstatus02" height="120" width="120"></canvas>
+                                <script>
+                                    var doughnutData = [
+                                            {
+                                                value: <?php echo round($valueExpensePercent); ?>, //Gastos
+                                                color:"#68dff0"
+                                            },
+                                            {
+                                                value : <?php echo 100-round($valueExpensePercent); ?>, //Restante
+                                                color : "#444c57"
+                                            }
+                                        ];
+                                        var myDoughnut = new Chart(document.getElementById("serverstatus02").getContext("2d")).Doughnut(doughnutData);
+                                </script>
+                                <p><?php 
+                                    
+                                    echo $month[$monthNumber] . ", " . date('Y'); 
+                                  ?></p>
+                                <footer>
+                                    <div class="pull-left">
+                                        <h5><i class="fa fa-money"></i> R$ <?php echo !is_null($incomeUser['amount']) ? number_format((float)$totalAmount, 2, ',', '.') : '0,00'; ?></h5>
+                                    </div>
+                                    <div class="pull-right">
+                                        <h5><?php
+                                            echo $valueExpensePercent ."% Gastos (R$ ". number_format($expensesUser['totalExpensesMonth'], 2, ',', '.') .")";
+                                          ?></h5>
+                                    </div>
+                                </footer>
+                            </div> <!-- /darkblue panel -->
+                        </div> <!-- /col-md-6 -->
+                        
+                        <!-- EXPENSES PANEL -->
+                        <div class="col-md-6 col-sm-6 mb">
+                            <div class="darkblue-panel pn">
+                                <div class="darkblue-header">
+                                    <h5>ÚLTIMOS 12 MESES</h5>
+                                </div>
+                                <div class="chart mt">
+                                    <div class="sparkline" data-type="line" data-resize="true" data-height="75" data-width="90%" data-line-width="1" data-line-color="#fff" data-spot-color="#fff" data-fill-color="" data-highlight-line-color="#fff" data-spot-radius="4" data-data="[<?php echo $monthsExpenses[0].','.$monthsExpenses[1].','.$monthsExpenses[2].','.$monthsExpenses[3].','.$monthsExpenses[4].','.$monthsExpenses[5].','.$monthsExpenses[6].','.$monthsExpenses[7].','.$monthsExpenses[8].','.$monthsExpenses[9].','.$monthsExpenses[10].','.$monthsExpenses[11];?>]"></div>
+                                </div>
+                                <p class="mt">Total dos gastos<br/><b>R$ <?php echo number_format($expensesUser['totalExpensesYear'], 2, ',', '.'); ?></b></p>
+                            </div>
+                        </div><!-- /col-md-6 -->
+                        
+                    </div><!-- /row -->
+                    
+                    <div class="row mt">
+                      <!--CUSTOM CHART START -->
+                      <div class="border-head">
+                          <h3>GASTOS</h3>
+                      </div>
+                      <div class="custom-bar-chart">
+
+                          <?php
+                            $expensesSixMonths = 0; // Valor total dos últimos 6 meses
+                            for ($i=11; $i >= 6; $i--) { 
+                              $expensesSixMonths += $monthsExpenses[$i];
+                            }
+                            //x = (20*860 / 100) + 860
+                            //x = (percentual*valor/100) + valor
+                            $expensesSixMonths = round($expensesSixMonths, 0, PHP_ROUND_HALF_UP);
+                            $total = ((40*$expensesSixMonths)/100)+$expensesSixMonths;
+
+                            $sum = round($total, 0, PHP_ROUND_HALF_UP)/5; // Valor para ser somado e gerar o eixo y do gráfico
+
+                            $y_axisChart = array();
+                            for ($i=1; $i <= 5; $i++) {
+                              array_push($y_axisChart, round($sum*$i, 0, PHP_ROUND_HALF_UP));
+                            }
+
+                            $percentChart = array(); // Percentual do gráfico, ou seja, o quanto a barra vai crescer em relação ao total do eixo y.
+                            // Ordem: [0] mês atual, ..., [5] 6º mês (1º do gráfico)
+                            for ($i=11; $i >= 6; $i--) {
+                              if($total == 0){
+                                    array_push( $percentChart, 0);
+                              } else {
+                                    array_push( $percentChart, round(($monthsExpenses[$i]*100)/$total, 0, PHP_ROUND_HALF_UP) );
+                              }
+                            }
+                          ?>
+
+                          <ul class="y-axis">
+                              <?php
+                                for ($i=4; $i >= 0; $i--) { 
+                                  echo "<li><span>" . $y_axisChart[$i] . "</li></span>";
+                                }
+                              ?>
+                              <li><span>0</span></li>
+                          </ul>
+                          <div class="bar">
+                              <div class="title"><?php echo strtoupper($month[$monthNumber-5]); ?></div>
+                              <div class="value tooltips" data-original-title="<?php echo $monthsExpenses[6]; ?>" data-toggle="tooltip" data-placement="top"><?php echo $percentChart[5]; ?>%</div>
+                          </div>
+                          <div class="bar ">
+                              <div class="title"><?php echo strtoupper($month[$monthNumber-4]); ?></div>
+                              <div class="value tooltips" data-original-title="<?php echo $monthsExpenses[7]; ?>" data-toggle="tooltip" data-placement="top"><?php echo $percentChart[4]; ?>%</div>
+                          </div>
+                          <div class="bar ">
+                              <div class="title"><?php echo strtoupper($month[$monthNumber-3]); ?></div>
+                              <div class="value tooltips" data-original-title="<?php echo $monthsExpenses[8]; ?>" data-toggle="tooltip" data-placement="top"><?php echo $percentChart[3]; ?>%</div>
+                          </div>
+                          <div class="bar ">
+                              <div class="title"><?php echo strtoupper($month[$monthNumber-2]); ?></div>
+                              <div class="value tooltips" data-original-title="<?php echo $monthsExpenses[9]; ?>" data-toggle="tooltip" data-placement="top"><?php echo $percentChart[2]; ?>%</div>
+                          </div>
+                          <div class="bar">
+                              <div class="title"><?php echo strtoupper($month[$monthNumber-1]); ?></div>
+                              <div class="value tooltips" data-original-title="<?php echo $monthsExpenses[10]; ?>" data-toggle="tooltip" data-placement="top"><?php echo $percentChart[1]; ?>%</div>
+                          </div>
+                          <div class="bar ">
+                              <div class="title"><?php echo strtoupper($month[$monthNumber]); ?></div>
+                              <div class="value tooltips" data-original-title="<?php echo $monthsExpenses[11]; ?>" data-toggle="tooltip" data-placement="top"><?php echo $percentChart[0]; ?>%</div>
+                          </div>
+                      </div>
+                      <!--custom chart end-->
+                    </div><!-- /row --> 
+                    
+                  </div><!-- /col-lg-9 END SECTION MIDDLE -->
+                  
+                  
+      <!-- **********************************************************************************************************************************************************
+      RIGHT SIDEBAR CONTENT
+      *********************************************************************************************************************************************************** -->                  
+                  
+                  <div class="col-lg-3 ds">
+                        <!-- CALENDAR-->
+                        <!-- https://github.com/zabuto/calendar -->
+                        <div id="calendar" class="mb">
+                            <!-- <div class="panel green-panel no-margin"> -->
+                            <div class="panel no-margin">
+                                <div class="panel-body">
+                                    <!--
+                                    <div id="date-popover" class="popover top" style="cursor: pointer; disadding: block; margin-left: 33%; margin-top: -50px; width: 175px;">
+                                        <div class="arrow"></div>
+                                        <h3 class="popover-title" style="disadding: none;"></h3>
+                                        <div id="date-popover-content" class="popover-content"></div>
+                                    </div>
+                                    -->
+                                    <div id="my-calendar"></div>
+                                </div>
+                            </div>
+                        </div><!-- / calendar -->
+                  </div><!-- /col-lg-3 -->
+                  
+              </div> <!--/row -->
+          </section>
+          
+          
+          
+      </section>
+      <!--main content end-->
+      
+      <!--footer start-->
+      <footer class="site-footer">
+          <div class="text-center">
+              2017 - Harllan A.
+              <!-- <a href="index.html#" class="go-top"><i class="fa fa-angle-up"></i></a> -->
+          </div>
+      </footer>
+      <!--footer end-->
+      
+  </section>
+
+    <!-- js placed at the end of the document so the pages load faster -->
+    <script src="<?php echo DASHGUM; ?>js/jquery.js"></script>
+    <script src="<?php echo DASHGUM; ?>js/jquery-1.8.3.min.js"></script>
+    <script src="<?php echo DASHGUM; ?>js/bootstrap.min.js"></script>
+    <script class="include" type="text/javascript" src="<?php echo DASHGUM; ?>js/jquery.dcjqaccordion.2.7.js"></script>
+    <script src="<?php echo DASHGUM; ?>js/jquery.scrollTo.min.js"></script>
+    <script src="<?php echo DASHGUM; ?>js/jquery.nicescroll.js" type="text/javascript"></script>
+    <script src="<?php echo DASHGUM; ?>js/jquery.sparkline.js"></script>
+
+
+    <!--common script for all pages-->
+    <script src="<?php echo DASHGUM; ?>js/common-scripts.js"></script>
+    
+    <script type="text/javascript" src="<?php echo DASHGUM; ?>js/gritter/js/jquery.gritter.js"></script>
+    <script type="text/javascript" src="<?php echo DASHGUM; ?>js/gritter-conf.js"></script>
+
+    <!--script for this page-->
+    <script src="<?php echo DASHGUM; ?>js/sparkline-chart.js"></script>    
+    <script src="<?php echo DASHGUM; ?>js/zabuto_calendar.js?v=3"></script>
+    
+    <script type="text/javascript">
+        $(document).ready(function () {
+        var unique_id = $.gritter.add({
+            // (string | mandatory) the heading of the notification
+            title: 'Olá <?php echo $view_user->name; ?>',
+            // (string | mandatory) the text inside the notification
+            text: 'Seja bem vindo(a).',
+            // (string | optional) the image to display on the left
+            image: '<?php echo IMG_UPLOAD; ?>users/<?php echo (!is_null($view_user->image)) ? $view_user->id . '/' . $view_user->image : 'img_default_user.png';?>',
+            // (bool | optional) if you want it to fade out on its own or just sit there
+            sticky: true,
+            // (int | optional) the time you want it to be alive for before fading out
+            time: '',
+            // (string | optional) the class name you want to apply to that specific message
+            class_name: 'my-sticky-class'
+        });
+        
+        /* Retira a mensagem automaticamente */
+        setTimeout(
+            function(){
+                  $.gritter.remove(unique_id, {
+                  fade: true,
+                  speed: 'slow'
+                  });
+            },
+            5000);
+
+        return false;
+        });
+    </script>
+    
+    <script type="application/javascript">
+        $(document).ready(function () {
+            /*
+            $("#date-popover").popover({html: true, trigger: "manual"});
+            $("#date-popover").hide();
+            $("#date-popover").click(function (e) {
+                $(this).hide();
+            });
+            */
+            $("#my-calendar").zabuto_calendar({
+                language: "pt",
+                today: true,
+                weekstartson: 0,
+                nav_icon: {
+                  prev: '<i class="fa fa-chevron-circle-left"></i>',
+                  next: '<i class="fa fa-chevron-circle-right"></i>'
+                },
+                action: function () {
+                    return myDateFunction(this.id, false);
+                },
+                action_nav: function () {
+                    return myNavFunction(this.id);
+                },
+                ajax: {
+                    url: "<?php echo DASHGUM; ?>show_data.php",
+                    modal: true
+                },
+                legend: [
+                    {type: "block", label: "Hoje", classname: 'blueToday'},
+                    {type: "block", label: "Feriado", classname: "orangeHoliday"}
+                ]
+            });
+        });
+        
+        function myNavFunction(id) {
+            //$("#date-popover").hide();
+            var nav = $("#" + id).data("navigation");
+            var to = $("#" + id).data("to");
+            console.log('nav ' + nav + ' to: ' + to.month + '/' + to.year);
+        };
+        
+        function myDateFunction(id) {
+            var date = $("#" + id).data("date");
+            var hasEvent = $("#" + id).data("hasEvent");
+        };
+    </script>
+  
+

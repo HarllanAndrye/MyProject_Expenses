@@ -1,0 +1,44 @@
+    <div id="registration-page">
+
+      <!-- Caso aconteça algum erro -->
+      <?php echo (isset($this->alert)?$this->alert:''); ?>
+
+      <div class="container">
+      
+          <form class="form-login" method="post" action="<?php echo BASE; ?>registration/register/">
+            <h2 class="form-login-heading">Cadastre-se</h2>
+            <div class="login-wrap">
+
+                <label>Nome:</label>
+                <input type="text" class="form-control" name="name" id="name" placeholder="nome completo" value="<?php echo $this->request->post('name') ?>" autofocus>
+                <br>
+                <label>E-mail:</label>
+                <input type="text" class="form-control" name="email" id="email" placeholder="email@dominio.com" value="<?php echo $this->request->post('email') ?>">
+                <br>
+                <label>Usuário:</label>
+                <input type="text" class="form-control" name="username" id="username" placeholder="fulano" value="<?php echo $this->request->post('username') ?>">
+                <br>
+                <label>Senha:</label>
+                <input type="password" class="form-control" name="password" id="password" placeholder="sua senha">
+                <br>
+
+                <button class="btn btn-success btn-block" type="submit"><i class="fa"></i>CADASTRAR</button>
+                <button class="btn btn-theme btn-block" type="button" onClick="history.go(-1);"><i class="fa"></i>Cancelar</button>
+
+            </div>
+    
+          </form>     
+      
+      </div>
+    </div>
+
+    <!-- js placed at the end of the document so the pages load faster -->
+    <script src="<?php echo DASHGUM; ?>js/jquery.js"></script>
+    <script src="<?php echo DASHGUM; ?>js/bootstrap.min.js"></script>
+
+    <!--BACKSTRETCH-->
+    <!-- You can use an image of whatever size. This script will stretch to fit in any screen size.-->
+    <script type="text/javascript" src="<?php echo DASHGUM; ?>js/jquery.backstretch.min.js"></script>
+    <script>
+        $.backstretch("<?php echo DASHGUM; ?>img/background.jpg", {speed: 500});
+    </script>

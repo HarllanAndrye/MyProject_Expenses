@@ -1,0 +1,35 @@
+    <div id="recover-page">
+
+      <!-- Caso aconteça algum erro -->
+      <?php echo (isset($this->alert)?$this->alert:''); ?>
+
+      <div class="container">
+      
+          <form class="form-login" method="post" action="<?php echo BASE; ?>recover/request/">
+            <h2 class="form-login-heading">Esqueceu a senha?</h2>
+            <div class="login-wrap">
+
+                <label>E-mail:</label>
+                <input type="email" class="form-control" name="email" id="email" placeholder="seuEmail@dominio.com.br" value="<?php echo $this->request->post('email') ?>" autofocus>
+                <br>
+                
+                <button class="btn btn-success btn-block" type="submit"><i class="fa"></i>Enviar link de redefinição</button>
+                <button class="btn btn-theme btn-block" type="button" onClick="history.go(-1);"><i class="fa"></i>Cancelar</button>
+
+            </div>
+    
+          </form>     
+      
+      </div>
+    </div>
+
+    <!-- js placed at the end of the document so the pages load faster -->
+    <script src="<?php echo DASHGUM; ?>js/jquery.js"></script>
+    <script src="<?php echo DASHGUM; ?>js/bootstrap.min.js"></script>
+
+    <!--BACKSTRETCH-->
+    <!-- You can use an image of whatever size. This script will stretch to fit in any screen size.-->
+    <script type="text/javascript" src="<?php echo DASHGUM; ?>js/jquery.backstretch.min.js"></script>
+    <script>
+        $.backstretch("<?php echo DASHGUM; ?>img/background.jpg", {speed: 500});
+    </script>

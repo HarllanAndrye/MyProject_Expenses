@@ -1,0 +1,130 @@
+<section id="container" >
+  <!-- **********************************************************************************************************************************************************
+  TOP BAR CONTENT & NOTIFICATIONS
+  *********************************************************************************************************************************************************** -->
+  <!--header start-->
+  <header class="header black-bg">
+          <div class="sidebar-toggle-box">
+              <div class="fa fa-bars tooltips" data-placement="right" data-original-title="Toggle Navigation"></div>
+          </div>
+        <!--logo start-->
+        <a class="logo"><b>Despesas/Gastos</b></a>
+        <!--logo end-->
+        <div class="top-menu">
+            <ul class="nav pull-right top-menu">
+                <li><a class="logout" href="<?php echo BASE; ?>login/logout/">Sair</a></li>
+            </ul>
+        </div>
+    </header>
+  <!--header end-->
+  
+  <!-- **********************************************************************************************************************************************************
+  MAIN SIDEBAR MENU
+  *********************************************************************************************************************************************************** -->
+  <!--sidebar start-->
+  <aside>
+
+    <div id="sidebar"  class="nav-collapse ">
+      <!-- sidebar menu start-->
+      <ul class="sidebar-menu" id="nav-accordion">
+
+        <p class="centered">
+          <a href="<?php echo BASE; ?>profile/edit/">
+            <img title="Alterar minhas informações" src="<?php echo IMG_UPLOAD; ?>users/<?php echo (!is_null($view_user->image)) ? $view_user->id . '/' . $view_user->image : 'img_default_user.png' ;?>" class="img-circle" width="60">
+          </a>
+        </p>
+        <h5 class="centered"><?php echo strtoupper($view_user->name); ?></h5>
+
+      <?php echo (isset($this->menu) ? $this->menu : ''); ?>
+  </aside>
+  <!--sidebar end-->
+  
+  <!-- **********************************************************************************************************************************************************
+  MAIN CONTENT
+  *********************************************************************************************************************************************************** -->
+  <!--main content start-->
+  <section id="main-content">
+      <section class="wrapper">
+				
+			
+				
+      <h3><i class="fa fa-angle-right"></i> Altere seus dados</h3>
+          <!-- page start -->
+		<div class="row mt">
+				<div class="col-md-8">
+					<div class="content-panel">
+						<?php 
+							echo (isset($this->alert)?$this->alert:'');
+					
+							// [] é um array, igual a array().
+							$values = [
+								'name' => $view_user->name,
+								'email' => $view_user->email,
+								'username' => $view_user->username
+							];
+					
+							// Usando o modelo de formuário do bootstrap (diminui o código html)
+							// Documentação: http://smarttechdo.com/~avb/pfbc/api/
+							Form::open('editUser', $values, [
+								'action' => BASE . 'profile/edit',
+								'enctype' => 'multipart/form-data', //Para a imagem do usuário
+								'prevent' => [
+									'focus' //Evitar o focus
+								]
+							]);
+					
+								if (!is_null($view_user->image)) {
+									echo '<img src="' . IMG_UPLOAD . 'users/' . $view_user->id . '/' . $view_user->image . '" width="100" style="margin-left:5px";>';
+								}
+								else {
+									echo '<img src="' . IMG_UPLOAD . 'users/img_default_user.png" width="100"  style="margin-left:5px">';
+								}
+								Form::File('Imagem do usuário', 'image', ['class' => 'btn btn-default']);
+					
+								// 'texto', 'id'
+								Form::Textbox('Nome', 'name', [
+										'required' => 1 //Obrigatório esse campo
+									]);
+								Form::Email('E-mail', 'email', [
+										'required' => 1
+									]);
+								Form::Textbox('Login', 'username', [
+										'required' => 1
+									]);
+								Form::Password('Senha (Preencha apenas se desejar alterar)', 'password');
+					
+								Form::Button('Atualizar perfil', 'submit', [
+										//'style' => 'width: 100%',
+										'class' => 'btn btn-success pull-right'
+									]);
+					
+							Form::close(false); //false: não adiciona nenhum botão do bootstrap
+						?>
+					
+					</div>
+				</div>
+		</div>
+          <!-- page end-->
+      </section>
+  </section>
+  <!--main content end-->
+	
+  <!--footer start-->
+  <footer class="site-footer">
+      <div class="text-center">
+          2017 - Harllan A.
+      </div>
+  </footer>
+  <!--footer end-->
+</section>
+
+<!-- js placed at the end of the document so the pages load faster -->
+<script src="<?php echo DASHGUM; ?>js/jquery.js"></script>
+<script src="<?php echo DASHGUM; ?>js/bootstrap.min.js"></script>
+<script class="include" type="text/javascript" src="<?php echo DASHGUM; ?>js/jquery.dcjqaccordion.2.7.js"></script>
+<script src="<?php echo DASHGUM; ?>js/jquery.scrollTo.min.js"></script>
+<script src="<?php echo DASHGUM; ?>js/jquery.nicescroll.js" type="text/javascript"></script>
+
+<!--common script for all pages-->
+<script src="<?php echo DASHGUM; ?>js/common-scripts.js"></script>
+
